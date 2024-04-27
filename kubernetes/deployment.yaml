@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appk
+  labels:
+    app: appk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appk
+  template:
+    metadata:
+      labels:
+        app: appk
+    spec:
+      containers:
+      - name: app
+        image: k8s-ejemplo:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /tmp/data
+          name: test-volume
+      volumes:
+        - name: test-volume
+          hostPath:
+            path: /tmp/data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appk
+spec:
+  type: NodePort
+  selector:
+    app: appk
+  ports:
+  - name: appk-port
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
